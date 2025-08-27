@@ -235,88 +235,76 @@ GROUP BY year
 Q7: Which industry groups has demonstrated the most notable decrease in carbon footprints (PCFs) over time?
 ```
 WITH handled_duplicates AS (
-SELECT *,
-ROW_NUMBER() OVER (PARTITION BY id,product_name, company_id, country_id, industry_group_id, year) AS rn
-FROM product_emissions
+  SELECT *,
+         ROW_NUMBER() OVER (
+           PARTITION BY id, product_name, company_id, country_id, industry_group_id, year
+           ORDER BY id
+         ) AS rn
+  FROM product_emissions
+),
+industry_yearly AS (
+  SELECT ig.industry_group,
+         year,
+         ROUND(SUM(carbon_footprint_pcf), 2) AS total_emission
+  FROM handled_duplicates hd
+  JOIN industry_groups ig ON hd.industry_group_id = ig.id
+  WHERE rn = 1
+  GROUP BY ig.industry_group, year
+),
+YearlyChange AS (
+SELECT industry_group,
+       year,
+       total_emission,
+       total_emission - LAG(total_emission) OVER (PARTITION BY industry_group ORDER BY year) AS change_vs_prev_year
+FROM industry_yearly
+ORDER BY industry_group, year
 )
 SELECT
-	ig.industry_group,
+	industry_group,
 	year,
-	ROUND(SUM(carbon_footprint_pcf), 2) AS total_emission
-FROM handled_duplicates
-JOIN industry_groups ig ON handled_duplicates.industry_group_id = ig.id
-WHERE rn = 1
-GROUP BY ig.industry_group, year
-ORDER BY ig.industry_group, year, total_emission DESC
+    SUM(change_vs_prev_year) AS total_change
+FROM YearlyChange
+WHERE change_vs_prev_year IS NOT NULL
+GROUP BY industry_group, year
 ```
-|industry_group|year|total_emission|
-|--------------|----|--------------|
-|"Consumer Durables, Household and Personal Products"|2015|931.00|
-|"Food, Beverage & Tobacco"|2013|4308.00|
-|"Food, Beverage & Tobacco"|2014|2023.00|
-|"Food, Beverage & Tobacco"|2015|0.00|
+|industry_group|year|total_change|
+|--------------|----|------------|
+|"Food, Beverage & Tobacco"|2014|-2285.00|
+|"Food, Beverage & Tobacco"|2015|-2023.00|
 |"Food, Beverage & Tobacco"|2016|99639.00|
-|"Food, Beverage & Tobacco"|2017|3162.00|
-|"Forest and Paper Products - Forestry, Timber, Pulp and Paper, Rubber"|2015|8909.00|
-|"Mining - Iron, Aluminum, Other Metals"|2015|8181.00|
-|"Pharmaceuticals, Biotechnology & Life Sciences"|2013|32271.00|
-|"Pharmaceuticals, Biotechnology & Life Sciences"|2014|40215.00|
-|"Textiles, Apparel, Footwear and Luxury Goods"|2015|228.00|
-|Automobiles & Components|2013|130189.00|
-|Automobiles & Components|2014|230015.00|
-|Automobiles & Components|2015|817227.00|
-|Automobiles & Components|2016|1404833.00|
-|Capital Goods|2013|60117.00|
-|Capital Goods|2014|93699.00|
-|Capital Goods|2015|3505.00|
-|Capital Goods|2016|6369.00|
-|Capital Goods|2017|94943.00|
-|Chemicals|2015|44939.00|
-|Commercial & Professional Services|2013|817.00|
-|Commercial & Professional Services|2014|477.00|
-|Commercial & Professional Services|2016|2890.00|
-|Commercial & Professional Services|2017|741.00|
-|Consumer Durables & Apparel|2013|2860.00|
-|Consumer Durables & Apparel|2014|3123.00|
-|Consumer Durables & Apparel|2016|1114.00|
-|Containers & Packaging|2015|2988.00|
-|Electrical Equipment and Machinery|2015|9801558.00|
-|Energy|2013|750.00|
-|Energy|2016|10024.00|
-|Food & Beverage Processing|2015|138.00|
-|Food & Staples Retailing|2014|773.00|
-|Food & Staples Retailing|2015|706.00|
-|Food & Staples Retailing|2016|2.00|
-|Gas Utilities|2015|61.00|
-|Household & Personal Products|2013|0.00|
-|Materials|2013|194464.00|
-|Materials|2014|66719.00|
-|Materials|2016|61887.00|
-|Materials|2017|107129.00|
-|Media|2013|9645.00|
-|Media|2014|9645.00|
-|Media|2015|1919.00|
-|Media|2016|1808.00|
-|Retailing|2014|11.00|
-|Retailing|2015|11.00|
-|Semiconductors & Semiconductor Equipment|2014|50.00|
-|Semiconductors & Semiconductor Equipment|2016|2.00|
-|Semiconductors & Semiconductors Equipment|2015|3.00|
-|Software & Services|2013|3.00|
-|Software & Services|2014|143.00|
-|Software & Services|2015|22851.00|
-|Software & Services|2016|22846.00|
-|Software & Services|2017|690.00|
-|Technology Hardware & Equipment|2013|60539.00|
-|Technology Hardware & Equipment|2014|101153.00|
-|Technology Hardware & Equipment|2015|93807.00|
-|Technology Hardware & Equipment|2016|1285.00|
-|Technology Hardware & Equipment|2017|21866.00|
-|Telecommunication Services|2013|52.00|
-|Telecommunication Services|2014|183.00|
-|Telecommunication Services|2015|183.00|
-|Tires|2015|2022.00|
-|Tobacco|2015|1.00|
-|Trading Companies & Distributors and Commercial Services & Supplies|2015|239.00|
-|Utilities|2013|61.00|
-|Utilities|2016|61.00|
+|"Food, Beverage & Tobacco"|2017|-96477.00|
+|"Pharmaceuticals, Biotechnology & Life Sciences"|2014|7944.00|
+|Automobiles & Components|2014|99826.00|
+|Automobiles & Components|2015|587212.00|
+|Automobiles & Components|2016|587606.00|
+|Capital Goods|2014|33582.00|
+|Capital Goods|2015|-90194.00|
+|Capital Goods|2016|2864.00|
+|Capital Goods|2017|88574.00|
+|Commercial & Professional Services|2014|-340.00|
+|Commercial & Professional Services|2016|2413.00|
+|Commercial & Professional Services|2017|-2149.00|
+|Consumer Durables & Apparel|2014|263.00|
+|Consumer Durables & Apparel|2016|-2009.00|
+|Energy|2016|9274.00|
+|Food & Staples Retailing|2015|-67.00|
+|Food & Staples Retailing|2016|-704.00|
+|Materials|2014|-127745.00|
+|Materials|2016|-4832.00|
+|Materials|2017|45242.00|
+|Media|2014|0.00|
+|Media|2015|-7726.00|
+|Media|2016|-111.00|
+|Retailing|2015|0.00|
+|Semiconductors & Semiconductor Equipment|2016|-48.00|
+|Software & Services|2014|140.00|
+|Software & Services|2015|22708.00|
+|Software & Services|2016|-5.00|
+|Software & Services|2017|-22156.00|
+|Technology Hardware & Equipment|2014|40614.00|
+|Technology Hardware & Equipment|2015|-7346.00|
+|Technology Hardware & Equipment|2016|-92522.00|
+|Technology Hardware & Equipment|2017|20581.00|
+|Telecommunication Services|2014|131.00|
+|Telecommunication Services|2015|0.00|
+|Utilities|2016|0.00|
