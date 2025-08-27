@@ -179,3 +179,7 @@ LIMIT 10;
 |"Mitsubishi Gas Chemical Company, Inc."|106008.00|
 |"Daikin Industries, Ltd."|105600.00|
 |CJ Cheiljedang|94817.00|
+
+Q5: What are the countries with the highest contribution to carbon emissions?
+```
+```
