@@ -232,6 +232,8 @@ GROUP BY year
 |2016|1612760.00|
 |2017|228531.00|
 
+![](https://github.com/BangPham-ux/Project-2---Carbon-Emission-Analysis/blob/main/Total_emission%20by%20Year.png)
+
 Q7: Which industry groups has demonstrated the most notable decrease in carbon footprints (PCFs) over time?
 ```
 WITH handled_duplicates AS (
