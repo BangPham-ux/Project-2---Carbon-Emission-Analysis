@@ -182,4 +182,53 @@ LIMIT 10;
 
 Q5: What are the countries with the highest contribution to carbon emissions?
 ```
+WITH handled_duplicates AS (
+SELECT *,
+ROW_NUMBER() OVER (PARTITION BY id,product_name, company_id, country_id, industry_group_id, year) AS rn
+FROM product_emissions
+)
+SELECT 
+	c.country_name,
+	ROUND(SUM(carbon_footprint_pcf), 2) AS total_emission
+FROM handled_duplicates
+JOIN countries c  ON handled_duplicates.country_id = c.id
+WHERE rn = 1
+GROUP BY c.country_name
+ORDER BY total_emission DESC
+LIMIT 10;
 ```
+|country_name|total_emission|
+|------------|--------------|
+|Spain|9786127.00|
+|Germany|2251225.00|
+|Japan|519348.00|
+|USA|451867.00|
+|Brazil|167587.00|
+|Luxembourg|167007.00|
+|South Korea|140995.00|
+|Netherlands|70417.00|
+|Taiwan|61511.00|
+|India|24574.00|
+
+Q6: What is the trend of carbon footprints (PCFs) over the years?
+```
+WITH handled_duplicates AS (
+SELECT *,
+ROW_NUMBER() OVER (PARTITION BY id,product_name, company_id, country_id, industry_group_id, year) AS rn
+FROM product_emissions
+)
+SELECT 
+	year,
+	ROUND(SUM(carbon_footprint_pcf), 2) AS total_emission
+FROM handled_duplicates
+WHERE rn = 1
+GROUP BY year
+```
+|year|total_emission|
+|----|--------------|
+|2013|496076.00|
+|2014|548229.00|
+|2015|10810407.00|
+|2016|1612760.00|
+|2017|228531.00|
+
