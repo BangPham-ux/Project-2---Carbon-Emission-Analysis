@@ -150,6 +150,8 @@ ORDER BY total_emission DESC
 |Tobacco|1.00|
 |Household & Personal Products|0.00|
 
+--> Kết luận: Ngành có lượng phát thải carbon lớn nhất là Electrical Equipment and Machinery với khoảng cách khá lớn so với các ngành còn lại.
+
 Q4: What are the companies with the highest contribution to carbon emissions?
 ```
 WITH handled_duplicates AS (
@@ -235,9 +237,13 @@ GROUP BY year
 ![](https://github.com/BangPham-ux/Project-2---Carbon-Emission-Analysis/blob/main/Total_emission%20by%20Year.png)
 
 2013–2014: Lượng phát thải carbon ổn định ở mức thấp, gần như không thay đổi nhiều.
+
 2015: Lập đỉnh tăng vọt mạnh, tổng phát thải vượt trên 10 triệu – cao nhất trong giai đoạn.
+
 2016: Sau đỉnh năm 2015, lượng phát thải giảm rất mạnh, chỉ còn khoảng 1,6 triệu.
+
 2017: Tiếp tục giảm, thấp nhất trong các giai đoạn.
+
 --> Kết luận: Xu hướng PCFs trong giai đoạn 2013–2017 cho thấy một đợt bùng phát đột biến năm 2015, sau đó giảm dần mạnh mẽ về mức thấp, thể hiện sự biến động lớn.
 
 Q7: Which industry groups has demonstrated the most notable decrease in carbon footprints (PCFs) over time?
@@ -320,6 +326,9 @@ GROUP BY industry_group, year
 ![](https://github.com/BangPham-ux/Project-2---Carbon-Emission-Analysis/blob/main/Total_change.png?raw=true)
 
 Industry_group "Materials" có mức giảm lớn nhất với –87,335 (đáng chú ý nhất, đặc biệt năm 2014 giảm mạnh –127,745).
+
 "Technology Hardware & Equipment" cũng có mức giảm đáng kể –38,673, chủ yếu do mức giảm lớn trong năm 2016 (–92,522).
+
 "Media" có xu hướng giảm liên tục, tổng cộng –7,837.
---> Kết luận: "Materials" thể hiện mức giảm PCF nổi bật nhất theo thời gian, tiếp theo là Technology Hardware & Equipment và Media
+
+--> Kết luận: "Materials" thể hiện mức giảm PCF nổi bật nhất theo thời gian, tiếp theo là Technology Hardware & Equipment và Media.
