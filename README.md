@@ -18,7 +18,7 @@ LIMIT 5
 | 10222-1-2013 | 83         | 28         | 8                 | 2013 | Office Chair                                                    | 20.68     | 73                   | 80.63                      | 17.36                        | 2.01                         | 
 | 10261-1-2017 | 14         | 16         | 25                | 2017 | Multifunction Printers                                          | 110       | 1488                 | 30.65                      | 5.51                         | 63.84                        | 
 | 10261-2-2017 | 14         | 16         | 25                | 2017 | Multifunction Printers                                          | 110       | 1818                 | 25.08                      | 4.51                         | 70.41                        | 
-# Pre-processing
+# III. Pre-processing
 Xử lý giá trị trùng lặp
 - Trước khi xử lý
 
@@ -41,7 +41,7 @@ WHERE rn = 1
 |COUNT(*)|
 |--------|
 |866|
-# Analyse
+# IV. Analyse
 Q1: Which products contribute the most to carbon emissions?
 ```
 WITH handled_duplicates AS (
